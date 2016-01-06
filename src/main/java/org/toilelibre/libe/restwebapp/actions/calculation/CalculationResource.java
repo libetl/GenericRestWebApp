@@ -27,7 +27,7 @@ public class CalculationResource {
     private Calculator calculator;
 
     @RequestMapping (value = "/", method = RequestMethod.POST)
-    public Response<ObjectNode<Node>> calculate (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2) throws WrongCalculationAnswer {
+    public Response<ObjectNode<Node>> calculate (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2) throws WrongCalculationAnswerException {
         CalculationResource.LOGGER.info (String.format ("Calculating %d + %d", int1, int2));
 
         final NodeFactory factory = NodeFactory.instance;
@@ -39,13 +39,13 @@ public class CalculationResource {
 
     @RequestMapping (value = "/guess", method = RequestMethod.POST)
     public Response<Integer> guessSum (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2, final @RequestBodyPath ("result") int result)
-            throws WrongCalculationAnswer {
+            throws WrongCalculationAnswerException {
 
         CalculationResource.LOGGER.info (String.format ("Checking if %d + %d = %d", int1, int2, result));
         final int myResult = this.calculator.sum (int1, int2);
 
         if (myResult != result) {
-            throw new WrongCalculationAnswer ();
+            throw new WrongCalculationAnswerException ();
         }
 
         return new Response<Integer> (this.linkHelper.get (), myResult);
