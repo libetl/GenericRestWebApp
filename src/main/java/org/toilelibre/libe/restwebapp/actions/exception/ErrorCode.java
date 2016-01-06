@@ -1,6 +1,5 @@
 package org.toilelibre.libe.restwebapp.actions.exception;
 
-
 public enum ErrorCode {
 
     WRONG_ANSWER (Kind.BAD_INPUT, "Your calculation answer was not correct.");

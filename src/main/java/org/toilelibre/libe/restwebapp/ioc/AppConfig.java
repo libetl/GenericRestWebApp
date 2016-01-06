@@ -6,5 +6,4 @@ interface AppConfig {
 
     Calculator getCalculator ();
 
-
 }

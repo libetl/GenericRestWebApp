@@ -17,12 +17,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.NestedServletException;
+import org.toilelibre.libe.restwebapp.ioc.LuceneSpellCheckerConfig;
 import org.toilelibre.libe.restwebapp.ioc.webapp.WebAppConfig;
 import org.toilelibre.libe.restwebapp.testutils.LogbackConfigRule;
 import org.toilelibre.libe.restwebapp.testutils.SmartLogRule;
 import org.toilelibre.libe.restwebapp.testutils.TestConfig;
 
-@ContextConfiguration (classes = { WebAppConfig.class, TestConfig.class })
+@ContextConfiguration (classes = { WebAppConfig.class, LuceneSpellCheckerConfig.class, TestConfig.class })
 @WebAppConfiguration
 public class CalculationAPITest {
 
@@ -33,75 +34,59 @@ public class CalculationAPITest {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule ();
-    
+
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule ();
 
     @Rule
     public SmartLogRule smartLogRule = new SmartLogRule ();
-    
+
     @Resource
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
-    
 
-    @Before
-    public void startMockMvc () {
-        mockMvc = MockMvcBuilders.webAppContextSetup (webApplicationContext).build ();
-    }
-    
     @Test
     public void calculateShouldAnswerSuccessfully () throws Exception {
-        mockMvc.perform (MockMvcRequestBuilders.post ("/calculation/")
-                                               .content ("{\"int1\":1,\"int2\":2}")
-                                               .contentType (MediaType.APPLICATION_JSON)
-                                               .accept (MediaType.APPLICATION_JSON))
-               .andExpect (MockMvcResultMatchers.status ().is2xxSuccessful ())
-               .andExpect (MockMvcResultMatchers.content ().contentType (MediaType.parseMediaType ("application/json;charset=UTF-8")))
-               .andExpect (MockMvcResultMatchers.content ().json (
-                       "{\"self\":{\"rel\":\"CalculationCalculate\","
-                       + "         \"href\":\"http://localhost/calculation/\","
-                       + "         \"methods\":[\"POST\"],\"params\":"
-                       + "                [{\"binding\":\"int1\",\"type\":\"int\"},{\"binding\":\"int2\",\"type\":\"int\"}]},"
-                       + "\"type\":\"ComplexObjectNode\","
-                       + "\"ok\":1,"
-                       + "\"content\":{\"result\":\"3\",\"links\":[{\"methods\":[\"POST\"],"
-                       + "                                       \"params\":[{\"binding\":\"int1\",\"type\":\"int\"},"
-                       + "                                       {\"binding\":\"int2\",\"type\":\"int\"},{\"binding\":\"result\",\"type\":\"int\"}],"
-                       + "                                       \"rel\":\"CalculationGuessSum\",\"href\":\"http://localhost/calculation/guess\"}],"
-                       + "                                       \"int1\":\"1\",\"int2\":\"2\"}}"));
+        this.mockMvc
+                .perform (MockMvcRequestBuilders.post ("/calculation/").content ("{\"int1\":1,\"int2\":2}").contentType (MediaType.APPLICATION_JSON)
+                        .accept (MediaType.APPLICATION_JSON))
+                .andExpect (MockMvcResultMatchers.status ().is2xxSuccessful ())
+                .andExpect (MockMvcResultMatchers.content ().contentType (MediaType.parseMediaType ("application/json;charset=UTF-8")))
+                .andExpect (MockMvcResultMatchers.content ().json ("{\"self\":{\"rel\":\"CalculationCalculate\"," + "         \"href\":\"http://localhost/calculation/\","
+                        + "         \"methods\":[\"POST\"],\"params\":" + "                [{\"binding\":\"int1\",\"type\":\"int\"},{\"binding\":\"int2\",\"type\":\"int\"}]},"
+                        + "\"type\":\"ComplexObjectNode\"," + "\"ok\":1," + "\"content\":{\"result\":\"3\",\"links\":[{\"methods\":[\"POST\"],"
+                        + "                                       \"params\":[{\"binding\":\"int1\",\"type\":\"int\"},"
+                        + "                                       {\"binding\":\"int2\",\"type\":\"int\"},{\"binding\":\"result\",\"type\":\"int\"}],"
+                        + "                                       \"rel\":\"CalculationGuessSum\",\"href\":\"http://localhost/calculation/guess\"}],"
+                        + "                                       \"int1\":\"1\",\"int2\":\"2\"}}"));
     }
 
     @Test
     public void guessCorrectlyShouldAnswerSuccessfully () throws Exception {
-        mockMvc.perform (MockMvcRequestBuilders.post ("/calculation/guess")
-                                               .content ("{\"int1\":1,\"int2\":2,\"result\":3}")
-                                               .contentType (MediaType.APPLICATION_JSON)
-                                               .accept (MediaType.APPLICATION_JSON))
-               .andExpect (MockMvcResultMatchers.status ().is2xxSuccessful ())
-               .andExpect (MockMvcResultMatchers.content ().contentType (MediaType.parseMediaType ("application/json;charset=UTF-8")))
-               .andExpect (MockMvcResultMatchers.content ().json (
-                       "{\"self\":{\"rel\":\"CalculationGuessSum\","
-                       +          "\"href\":\"http://localhost/calculation/guess\","
-                       +          "\"methods\":[\"POST\"],\"params\":"
-                       +                 "[{\"binding\":\"int1\",\"type\":\"int\"},{\"binding\":\"int2\",\"type\":\"int\"},"
-                       +                   "{\"binding\":\"result\",\"type\":\"int\"}]},"
-                       + "\"type\":\"Integer\","
-                       + "\"ok\":1,"
-                       + "\"content\":3}"));
+        this.mockMvc
+                .perform (MockMvcRequestBuilders.post ("/calculation/guess").content ("{\"int1\":1,\"int2\":2,\"result\":3}").contentType (MediaType.APPLICATION_JSON)
+                        .accept (MediaType.APPLICATION_JSON))
+                .andExpect (MockMvcResultMatchers.status ().is2xxSuccessful ())
+                .andExpect (MockMvcResultMatchers.content ().contentType (MediaType.parseMediaType ("application/json;charset=UTF-8")))
+                .andExpect (MockMvcResultMatchers.content ()
+                        .json ("{\"self\":{\"rel\":\"CalculationGuessSum\"," + "\"href\":\"http://localhost/calculation/guess\"," + "\"methods\":[\"POST\"],\"params\":"
+                                + "[{\"binding\":\"int1\",\"type\":\"int\"},{\"binding\":\"int2\",\"type\":\"int\"}," + "{\"binding\":\"result\",\"type\":\"int\"}]},"
+                                + "\"type\":\"Integer\"," + "\"ok\":1," + "\"content\":3}"));
     }
 
-    @Test 
+    @Test
     public void guessNotCorrectlyShouldAnswerError () throws Exception {
         try {
-            mockMvc.perform (MockMvcRequestBuilders.post ("/calculation/guess")
-                    .content ("{\"int1\":1,\"int2\":2,\"result\":4}")
-                    .contentType (MediaType.APPLICATION_JSON)
-                    .accept (MediaType.APPLICATION_JSON))
-                    .andExpect (MockMvcResultMatchers.status ().is4xxClientError ());
-        } catch (NestedServletException nse) {
+            this.mockMvc.perform (MockMvcRequestBuilders.post ("/calculation/guess").content ("{\"int1\":1,\"int2\":2,\"result\":4}").contentType (MediaType.APPLICATION_JSON)
+                    .accept (MediaType.APPLICATION_JSON)).andExpect (MockMvcResultMatchers.status ().is4xxClientError ());
+        } catch (final NestedServletException nse) {
         }
+    }
+
+    @Before
+    public void startMockMvc () {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup (this.webApplicationContext).build ();
     }
 
 }

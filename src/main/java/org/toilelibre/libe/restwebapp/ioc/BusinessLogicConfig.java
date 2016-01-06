@@ -14,5 +14,4 @@ public class BusinessLogicConfig implements AppConfig {
         return new SimpleCalculator ();
     }
 
-
 }

@@ -10,7 +10,7 @@ public abstract class RestException extends Exception {
     public RestException () {
     }
 
-    public RestException (Exception e) {
+    public RestException (final Exception e) {
         super (e);
     }
 

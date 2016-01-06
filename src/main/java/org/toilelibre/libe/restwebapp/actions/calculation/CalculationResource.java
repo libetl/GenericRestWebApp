@@ -22,34 +22,32 @@ public class CalculationResource {
 
     @Inject
     private LinkHelper linkHelper;
-    
+
     @Inject
     private Calculator calculator;
-    
+
     @RequestMapping (value = "/", method = RequestMethod.POST)
     public Response<ObjectNode<Node>> calculate (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2) throws WrongCalculationAnswer {
         CalculationResource.LOGGER.info (String.format ("Calculating %d + %d", int1, int2));
 
-        NodeFactory factory = NodeFactory.instance;
-        int result = this.calculator.sum (int1, int2);
-        return new Response<ObjectNode<Node>> (this.linkHelper.get (), 
-                this.linkHelper.surroundWithLinks (factory.objectNode () //because of a bug in the jackson lib,
-                                                                         //cannot parse the integers
-                                                                        .put ("int1", "" + int1)
-                                                                        .put ("int2", "" + int2)
-                                                                        .put ("result", "" + result)));
+        final NodeFactory factory = NodeFactory.instance;
+        final int result = this.calculator.sum (int1, int2);
+        // because of a bug in the jackson lib, cannot parse the integers
+        return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode () 
+                .put ("int1", "" + int1).put ("int2", "" + int2).put ("result", "" + result)));
     }
 
     @RequestMapping (value = "/guess", method = RequestMethod.POST)
-    public Response<Integer> guessSum (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2, final @RequestBodyPath ("result") int result) throws WrongCalculationAnswer {
+    public Response<Integer> guessSum (final @RequestBodyPath ("int1") int int1, final @RequestBodyPath ("int2") int int2, final @RequestBodyPath ("result") int result)
+            throws WrongCalculationAnswer {
 
         CalculationResource.LOGGER.info (String.format ("Checking if %d + %d = %d", int1, int2, result));
-        int myResult = this.calculator.sum (int1, int2);
-        
+        final int myResult = this.calculator.sum (int1, int2);
+
         if (myResult != result) {
             throw new WrongCalculationAnswer ();
         }
-        
+
         return new Response<Integer> (this.linkHelper.get (), myResult);
     }
 }
