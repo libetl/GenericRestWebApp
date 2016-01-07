@@ -27,8 +27,6 @@ import org.toilelibre.libe.restwebapp.testutils.TestConfig;
 @WebAppConfiguration
 public class CalculationAPITest {
 
-    // The test does not need to know what impl of the account value object it
-    // uses
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
 
