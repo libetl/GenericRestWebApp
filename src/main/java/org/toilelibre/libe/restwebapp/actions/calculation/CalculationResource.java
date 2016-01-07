@@ -34,7 +34,7 @@ public class CalculationResource {
         final int result = this.calculator.sum (int1, int2);
         // because of a bug in the jackson lib, cannot parse the integers
         return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode () 
-                .put ("int1", "" + int1).put ("int2", "" + int2).put ("result", "" + result)));
+                .put ("int1", int1).put ("int2", int2).put ("result", result)));
     }
 
     @RequestMapping (value = "/guess", method = RequestMethod.POST)

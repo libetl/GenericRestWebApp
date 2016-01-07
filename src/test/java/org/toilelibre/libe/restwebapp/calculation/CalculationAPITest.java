@@ -55,11 +55,11 @@ public class CalculationAPITest {
                 .andExpect (MockMvcResultMatchers.content ().contentType (MediaType.parseMediaType ("application/json;charset=UTF-8")))
                 .andExpect (MockMvcResultMatchers.content ().json ("{\"self\":{\"rel\":\"CalculationCalculate\"," + "         \"href\":\"http://localhost/calculation/\","
                         + "         \"methods\":[\"POST\"],\"params\":" + "                [{\"binding\":\"int1\",\"type\":\"int\"},{\"binding\":\"int2\",\"type\":\"int\"}]},"
-                        + "\"type\":\"ComplexObjectNode\"," + "\"ok\":1," + "\"content\":{\"result\":\"3\",\"links\":[{\"methods\":[\"POST\"],"
+                        + "\"type\":\"ComplexObjectNode\"," + "\"ok\":1," + "\"content\":{\"result\":3,\"links\":[{\"methods\":[\"POST\"],"
                         + "                                       \"params\":[{\"binding\":\"int1\",\"type\":\"int\"},"
                         + "                                       {\"binding\":\"int2\",\"type\":\"int\"},{\"binding\":\"result\",\"type\":\"int\"}],"
                         + "                                       \"rel\":\"CalculationGuessSum\",\"href\":\"http://localhost/calculation/guess\"}],"
-                        + "                                       \"int1\":\"1\",\"int2\":\"2\"}}"));
+                        + "                                       \"int1\":1,\"int2\":2}}"));
     }
 
     @Test

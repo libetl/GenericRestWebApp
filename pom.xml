@@ -122,7 +122,11 @@
 			<artifactId>lucene-spellchecker</artifactId>
 			<version>3.6.2</version>
 		</dependency>
-
+		<dependency>
+        	<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>woodstox-core-asl</artifactId>
+			<version>4.4.1</version>
+		</dependency>
 
 		<!-- Test scope -->
 		<dependency>
