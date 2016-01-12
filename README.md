@@ -1,4 +1,4 @@
-Generic Rest Web App : mvn + Java 7 + Spring MVC + Spring core + Spring cache + Logback
+Generic Rest Web App : mvn + Java 7 + Spring MVC + Spring core + Logback
 
 This is a ZERO config webapp. 
 It is polyglott : it accepts application/json, application/xml, text/yaml and application/x-www-form-urlencoded
