@@ -5,7 +5,7 @@ It is polyglott : it accepts application/json, application/xml, text/yaml and ap
 It produces : application/json, application/xml, text/yaml and text/html (+ jquery + bootstrap)
 
 To start the server, use one of these commands : 
-* `mvn jetty:run`
+* `mvn install && mvn jetty:run`
 * `mvn install && java -jar target/GenericRestWebApp.jar`
 * `docker pull libetl/genericrestwebapp:latest && docker start -p8080 -d libetl/genericrestwebapp:latest`
 
