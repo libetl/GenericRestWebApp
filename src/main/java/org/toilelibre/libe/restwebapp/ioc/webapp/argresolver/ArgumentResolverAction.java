@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +84,28 @@ public enum ArgumentResolverAction {
             }
         }
 
+    }), MULTIPART_FORMDATA (MediaType.MULTIPART_FORM_DATA, new Action () {
+
+        @Override
+        public Object run (final String body, final String path, final Class<?> parameterType) {
+            String [] params = body.split ("--------------------------");
+            for (int i = 0 ; i < params.length ; i++){
+                String [] param = params [i].split ("\r\n");
+                if (param.length < 4)continue;
+                java.util.regex.Matcher matcher = CONTENT_DISPOSITION.matcher (param [1]);
+                
+                if (!matcher.find() || !path.equals (matcher.group (1)))continue;
+                String result = params [i].substring (params [i].indexOf("\r\n\r\n"));
+                if (result == null)continue;
+
+                return new ObjectMapper ().convertValue (Base64.getEncoder ().encodeToString (result.getBytes ()), parameterType);
+            }
+            return null;
+        }
+
     });
+    
+    private static final java.util.regex.Pattern CONTENT_DISPOSITION = Pattern.compile ("Content-Disposition: .* name=\"([^\"]+)\"");
 
     static interface Action {
         public Object run (String body, String path, Class<?> parameterType);

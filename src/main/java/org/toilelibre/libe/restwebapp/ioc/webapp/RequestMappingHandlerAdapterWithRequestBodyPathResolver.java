@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMethodArgumentResolver;
 import org.toilelibre.libe.restwebapp.ioc.webapp.argresolver.RequestBodyPathAnnotationArgumentResolver;
+import org.toilelibre.libe.restwebapp.ioc.webapp.argresolver.RequestFileAnnotationArgumentResolver;
 import org.toilelibre.libe.restwebapp.ioc.webapp.html.HtmlMessageConverter;
 import org.toilelibre.libe.restwebapp.ioc.webapp.html.WwwFormDataMessageConverter;
 import org.toilelibre.libe.restwebapp.ioc.webapp.yaml.YamlMessageConverter;
@@ -27,6 +28,8 @@ public class RequestMappingHandlerAdapterWithRequestBodyPathResolver extends Req
         final List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver> ();
 
         resolvers.add (new RequestBodyPathAnnotationArgumentResolver ());
+
+        resolvers.add (new RequestFileAnnotationArgumentResolver ());
 
         resolvers.add (new RequestResponseBodyMethodProcessor (this.getMessageConverters ()));
 
